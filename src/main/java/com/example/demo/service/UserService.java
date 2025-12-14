@@ -1,29 +1,38 @@
 package com.example.demo.service;
 
+import com.example.demo.DTO.RegisterDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class UserService {
+@RequiredArgsConstructor
+public class UserService{
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private  final PasswordEncoder passwordEncoder;
 
-    public User addUser(User user){
-        return userRepository.save(user);
+    public void addUser(RegisterDTO registerDTO){
+
+        User user=new User();
+        user.setName(registerDTO.getName());
+        user.setPhone(registerDTO.getPhone());
+        user.setEmail (registerDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));;
+
+        userRepository.save(user);
     }
-
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByEmail(email);
     }
 
     public Integer findIdByMail(String email){
         return userRepository.findIdByMail(email);
     }
-
-
 
 }

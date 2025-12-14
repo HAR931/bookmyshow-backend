@@ -7,12 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-
-public class SeatResponse {
+@NoArgsConstructor
+public class LockedSeatsResponse {
     private Integer id;
     private Integer seatNumber;
     private String status;
+    private Integer lockedBy;
 }
-

@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.DTO.LockedSeatsResponse;
 import com.example.demo.DTO.SeatResponse;
 import com.example.demo.model.Seat;
 import com.example.demo.model.User;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@Transactional
+
 public interface SeatRepository extends JpaRepository<Seat, Integer> {
 
     @Query("""
@@ -28,6 +29,7 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
 
 
     @Modifying
+    @Transactional
     @Query("""
     UPDATE Seat s
     SET s.status = 'LOCKED', s.lockedBy = :id
@@ -40,17 +42,17 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
                   Integer id);
 
     @Query("""
-    SELECT new com.example.demo.DTO.SeatResponse(
-        s.lockedBy, s.seatNumber, s.status
+    SELECT new com.example.demo.DTO.LockedSeatsResponse(
+        s.id, s.seatNumber, s.status,s.lockedBy
     )
     FROM Seat s
     WHERE s.show.id = :showId
     AND s.seatNumber IN :seatNumbers
 """)
-    List<SeatResponse> getSeatStatuses( Integer showId,
-                                       List<Integer> seatNumbers);
+    List<LockedSeatsResponse> getSeatStatuses(Integer showId,
+                                              List<Integer> seatNumbers);
 
-
+    @Transactional
     @Modifying
     @Query("""
     UPDATE Seat s
@@ -58,15 +60,16 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     WHERE s.show.id = :showId
     AND s.seatNumber IN :seatNumbers
 """)
-    public int confrimSeats(Integer showId, List<Integer> seatNumbers, User user);
+    public int confrimSeats(Integer showId, List<Integer> seatNumbers,User user);
 
+    @Transactional
     @Modifying
     @Query("""
     UPDATE Seat s
-    SET s.status = 'AVAILABLE', s.lockedBy = NULL
+    SET s.status = 'AVAILABLE', s.lockedBy = NULL,s.bookedBy=NULL
     WHERE s.show.id = :showId
-      AND s.lockedBy = :userId
-      AND s.seatNumber IN :seatNumbers
+    AND s.lockedBy = :userId
+    AND s.seatNumber IN :seatNumbers
 """)
     int unlockSeats(Integer showId,List<Integer> seatNumbers ,Integer userId);
 

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 
+import com.example.demo.DTO.TheatreDTO;
 import com.example.demo.model.Theatre;
 import com.example.demo.model.User;
 import com.example.demo.repository.TheatreRepository;
@@ -15,13 +16,18 @@ public class TheatreService {
 
     private final TheatreRepository theatreRepository; // final -> constructor generated automatically
 
-    public Theatre addTheatre(Theatre theatre, User loggedInUser) {
+
+
+    public void addTheatre(TheatreDTO theatreDTO, User loggedInUser) {
+
+        Theatre theatre = new Theatre();
+
+        theatre.setName(theatreDTO.getName());
+        theatre.setLocation(theatreDTO.getLocation());
         theatre.setOwner(loggedInUser);
-        return theatreRepository.save(theatre);
+
+        theatreRepository.save(theatre);
     }
-    public Theatre getTheatreById(Integer theatreId) {
-        return theatreRepository.findById(theatreId)
-                .orElseThrow(() -> new RuntimeException("Theatre not found"));
-    }
+
 
 }

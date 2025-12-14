@@ -9,6 +9,8 @@ import com.example.demo.model.User;
 import com.example.demo.service.SeatService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -26,12 +28,13 @@ public class SeatController {
         return seatService.getSeatsByShowId(showId);
     }
 
-    @PostMapping("/block")
+    @PostMapping("/bookSeats")
     public String blockSeats(@RequestBody SeatBookingRequest request, Principal principal) {
 
         String email = principal.getName();
-        Integer id = userService.findIdByMail(email);
+        //Integer id = userService.findIdByMail(email);
         User user=userService.getUserByEmail(email);
+        Integer id=user.getId();
 
         // Call service and return the response
         return seatService.blockSeats(
@@ -39,33 +42,31 @@ public class SeatController {
                 request.getSeatNumbers(),id,user);
     }
 
-    @PostMapping("/confirmSeats")
-    public String conformSeats(@RequestBody SeatBookingRequest request, Principal principal) {
-
-        String email = principal.getName();
-        User user=userService.getUserByEmail(email);
-
-        // Call service and return the response
-        return seatService.confrimSeats(
-                request.getShowId(),
-                request.getSeatNumbers(),user);
-    }
     @PostMapping("/cancelSeats")
-    public String cancelSeats(@RequestBody SeatBookingRequest request, Principal principal) {
+    public ResponseEntity<String> cancelSeats(
+            @RequestBody SeatBookingRequest request,
+            Principal principal
+    ) {
+        Integer userId = userService.findIdByMail(principal.getName());
 
-        String email = principal.getName();
-        Integer id = userService.findIdByMail(email);
-
-        // Call service and return the response
-        return seatService.cancelSeats(
+        seatService.cancelSeats(
                 request.getShowId(),
-                request.getSeatNumbers(),id);
-    }
-    @GetMapping("/mybookings")
-    public List<MyBookingResponse> myBookings(Principal principal) {
-        String email = principal.getName();
-        Integer id = userService.findIdByMail(email);
-        return seatService.getMyBookings(id);
+                request.getSeatNumbers(),
+                userId
+        );
+
+        return ResponseEntity.ok("The seats you booked will be cancelled");
     }
 
+    @GetMapping("/mybookings")
+    public ResponseEntity<?>myBookings(Principal principal) {
+        String email = principal.getName();
+        Integer id = userService.findIdByMail(email);
+        List<MyBookingResponse>myBookingResponses=seatService.getMyBookings(id);
+
+        if(myBookingResponses.isEmpty()){
+            return new ResponseEntity<>("No booking found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(myBookingResponses,HttpStatus.OK);
+    }
 }

@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
+import com.example.demo.DTO.TheatreDTO;
 import com.example.demo.model.Theatre;
 import com.example.demo.model.User;
 import com.example.demo.service.TheatreService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +22,14 @@ public class TheatreController {
     private final UserService userService; // to fetch user from DB
 
     @PostMapping("/add")
-    public Theatre addTheatre(@RequestBody Theatre theatre) {
+    public ResponseEntity<String> addTheatre(@RequestBody TheatreDTO theatreDTO, Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        String userEmail = auth.getName();
+        String userEmail= principal.getName();
 
         User loggedInUser = userService.getUserByEmail(userEmail);
 
-        return theatreService.addTheatre(theatre, loggedInUser);
+        theatreService.addTheatre(theatreDTO,loggedInUser);
+
+        return ResponseEntity.ok("New Theatre has been added successfully");
     }
 }

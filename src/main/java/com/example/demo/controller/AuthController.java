@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.DTO.RegisterDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -22,51 +23,50 @@ public class AuthController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private  final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody Map<String, String> body) {
-        String userName=body.get("name");
-        String phoneNUmber=body.get("phone");
-        String email = body.get("email");
-        String password = body.get("password");
-        password=passwordEncoder.encode(password);
+    public ResponseEntity<String> registerUser(@RequestBody RegisterDTO registerDTO) {
 
-        if (userRepository.findByEmail(email).isPresent()) {
+        String phone = registerDTO.getPhone();
+        String email = registerDTO.getEmail();
+
+        if (userRepository.findByEmail(email)!=null) {
             return new ResponseEntity<>("Email already exists", HttpStatus.CONFLICT);
         }
 
-        userService.addUser(
-                User.builder()
-                        .name(userName)
-                        .phone(phoneNUmber)
-                        .email(email)
-                        .password(password)
-                        .build()
-        );
+        if (userRepository.findByPhone(phone)!=null) {
+            return new ResponseEntity<>("Phone number already exists", HttpStatus.CONFLICT);
+        }
+
+        userService.addUser(registerDTO);
 
         return new ResponseEntity<>("Successfully Registered", HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?>loginUser(@RequestBody Map<String, String> body) {
-        String userName=body.get("name");
-        String phoneNUmber=body.get("phone");
-        String email = body.get("email");
-        String password = body.get("password");
 
-        var userOptional=userRepository.findByEmail(email);
-        if(userOptional.isEmpty()){
+    @PostMapping("/login")
+    public ResponseEntity<?>loginUser(@RequestBody RegisterDTO registerDTO) {
+
+        String phoneNumber = registerDTO.getPhone();
+        String email = registerDTO.getEmail();
+        String password=registerDTO.getPassword();
+
+        var user=userRepository.findByEmail(email);
+
+        if(user==null){
             return new ResponseEntity<>("User not Registered",HttpStatus.UNAUTHORIZED);
         }
-        User user=userOptional.get();
+
+        if (!phoneNumber.equals(user.getPhone())) {
+            return new ResponseEntity<>("Invalid Phone number", HttpStatus.UNAUTHORIZED);
+        }
         if(!passwordEncoder.matches(password,user.getPassword())){
             return new ResponseEntity<>("Incorrect Password",HttpStatus.UNAUTHORIZED);
         }
 
         String token=jwtUtil.generateToken(email);
         return ResponseEntity.ok(Map.of("token",token));
-
     }
 }

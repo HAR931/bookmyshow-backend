@@ -27,7 +27,7 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
             LocalTime newEnd
             );
 
-    @Query("""
+   @Query("""
     SELECT new com.example.demo.DTO.MovieSearchResponse(
         t.name,
         t.location,

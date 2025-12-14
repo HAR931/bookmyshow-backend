@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "users")
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -26,7 +25,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true, nullable = false)
+    @Column( nullable = false)
     private String name;
 
     @Column(unique = true, nullable = false)

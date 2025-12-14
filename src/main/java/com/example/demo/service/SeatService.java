@@ -1,14 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.DTO.MyBookingResponse;
-import com.example.demo.DTO.SeatBookingRequest;
-import com.example.demo.DTO.SeatBookingResponse;
-import com.example.demo.DTO.SeatResponse;
+import com.example.demo.DTO.*;
 import com.example.demo.model.Seat;
 import com.example.demo.model.Show;
 import com.example.demo.model.User;
 import com.example.demo.repository.SeatRepository;
 import com.example.demo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -54,13 +52,13 @@ public class SeatService {
         seatRepository.lockSeats(showId, seatNumbers,id);
 
         // Fetch updated statuses
-        List<SeatResponse> statuses =
+        List<LockedSeatsResponse> statuses =
                 seatRepository.getSeatStatuses(showId,seatNumbers);
 
-        List<SeatResponse> booked = new ArrayList<>();
-        List<SeatResponse> failed = new ArrayList<>();
+        List<LockedSeatsResponse> booked = new ArrayList<>();
+        List<LockedSeatsResponse> failed = new ArrayList<>();
 
-        for (SeatResponse s : statuses) {
+        for (LockedSeatsResponse s : statuses) {
             if (s.getStatus().equals("LOCKED")&&s.getLockedBy().equals(id)){
                 booked.add(s);
             } else {
@@ -93,13 +91,9 @@ public class SeatService {
         return "Seat are booked successfully";
     }
 
-    public String cancelSeats(Integer showId,List<Integer>Seats,Integer userId) {
 
-        new Thread(() -> {
-            seatRepository.unlockSeats(showId,Seats, userId);
-        }).start();
-
-        return "Your locked seats are cancelled.";
+    public void cancelSeats(Integer showId, List<Integer> seats, Integer userId) {
+        seatRepository.unlockSeats(showId, seats, userId);
     }
 
     public List<MyBookingResponse> getMyBookings(Integer userId) {

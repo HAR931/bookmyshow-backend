@@ -6,6 +6,9 @@ import com.example.demo.repository.ScreenRepository;
 import com.example.demo.repository.SeatRepository;
 import com.example.demo.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,41 +26,51 @@ public class ShowService {
     private final SeatService seatService;
 
 
-    public void addShow(Integer theatreId, Integer screenId, Show show,String email){
+    public ResponseEntity<String> addShow( Integer screenId, ShowDTO showDTO, String email){
+
 
         User user = userService.getUserByEmail(email);
 
-        Screen screen = screenRepository.findById(screenId)
-                .orElseThrow(() -> new RuntimeException("Screen not found"));
+        var screen = screenRepository.findById(screenId);
 
-        Theatre theatre = screen.getTheatre();  // Now works
-
-        if (!theatre.getOwner().getId().equals(user.getId())) {
-            throw new RuntimeException("You do not own this theatre");
+        if(screen.isEmpty()){
+            return new ResponseEntity<>("Screen not found",HttpStatus.NOT_FOUND);
         }
+
+        Integer ownerId=screenRepository.getOwnerId(screenId);
+
+        if(!user.getId().equals(ownerId))return new ResponseEntity<>("Your are not the owner of the screen",HttpStatus.UNAUTHORIZED);
 
         List<Show> overlap = showRepository.findOverlappingShows(
                 screenId,
-                show.getDate(),
-                show.getStartTime(),
-                show.getEndTime()
+                showDTO.getDate(),
+                showDTO.getStartTime(),
+                showDTO.getEndTime()
         );
 
         if (!overlap.isEmpty()) {
-            throw new RuntimeException("This show time overlaps with another show!");
+            return new ResponseEntity<>("Another show already streaming in the given times",HttpStatus.CONFLICT);
         }
 
-        Integer capacity=show.getSeatCapacity();
+        Integer capacity=showDTO.getSeatCapacity();
 
-        show.setScreen(screen);
+        Show show=new Show();
+
+        show.setMovieName(showDTO.getMovieName());
+        show.setDate(showDTO.getDate());
+        show.setStartTime(showDTO.getStartTime());
+        show.setEndTime(showDTO.getEndTime());
+
+        show.setScreen(screen.get());
         showRepository.save(show);
 
         seatService.createSeats(capacity,show);
+
+        return ResponseEntity.ok("Show has been successfully added");
 
     }
     public List<MovieSearchResponse>searchByMovieName(String movieName) {
         return showRepository.searchByMovieName(movieName);
     }
-
 
 }

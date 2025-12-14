@@ -16,7 +16,7 @@ import java.time.LocalTime;
 public class MovieSearchResponse {
     private String theatreName;
     private String location;
-    private int screenNo;
+    private Integer screenNo;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
