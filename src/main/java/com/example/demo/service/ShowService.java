@@ -1,18 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.DTO.MovieSearchResponse;
+import com.example.demo.DTO.ShowDTO;
 import com.example.demo.model.*;
 import com.example.demo.repository.ScreenRepository;
-import com.example.demo.repository.SeatRepository;
 import com.example.demo.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,7 +23,7 @@ public class ShowService {
     private final SeatService seatService;
 
 
-    public ResponseEntity<String> addShow( Integer screenId, ShowDTO showDTO, String email){
+    public ResponseEntity<String> addShow(Integer screenId, ShowDTO showDTO, String email){
 
 
         User user = userService.getUserByEmail(email);

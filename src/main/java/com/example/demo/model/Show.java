@@ -38,7 +38,7 @@ public class Show {
 
     private Integer seatCapacity;// total seats for this show
 
-     @OneToMany(mappedBy="show")
+     @OneToMany(mappedBy="show",cascade = CascadeType.ALL, orphanRemoval = true)
      List<Seat> seats=new ArrayList<>();
 
     @ManyToOne

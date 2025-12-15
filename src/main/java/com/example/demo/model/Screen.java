@@ -3,15 +3,7 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -36,7 +28,7 @@ public class Screen {
     private Theatre theatre;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "screen")
+    @OneToMany(mappedBy = "screen",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Show> shows;
 
 

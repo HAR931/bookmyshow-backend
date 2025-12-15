@@ -27,7 +27,8 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
             LocalTime newEnd
             );
 
-   @Query("""
+
+    @Query("""
     SELECT new com.example.demo.DTO.MovieSearchResponse(
         t.name,
         t.location,
@@ -41,6 +42,11 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
     JOIN sh.screen s
     JOIN s.theatre t
     WHERE LOWER(sh.movieName) = LOWER(:movieName)
+      AND (
+            sh.date > CURRENT_DATE
+            OR (sh.date = CURRENT_DATE AND sh.endTime > CURRENT_TIME)
+          )
+    ORDER BY sh.date, sh.startTime
 """)
     List<MovieSearchResponse> searchByMovieName(String movieName);
 

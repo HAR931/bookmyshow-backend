@@ -1,15 +1,16 @@
-package com.example.demo.model;
+package com.example.demo.DTO;
 
 import jakarta.persistence.Column;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 
 public class ShowDTO {
 

@@ -1,16 +1,16 @@
 package com.example.demo.DTO;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class SeatBookingResponse {
     private Integer showId;
     private List<SeatResponse> bookedSeats;

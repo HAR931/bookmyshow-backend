@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/theatres")
+@RequestMapping("/theatre")
 @RequiredArgsConstructor
 public class TheatreController {
 
