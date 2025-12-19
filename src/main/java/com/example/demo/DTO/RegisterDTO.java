@@ -10,10 +10,10 @@ import lombok.*;
 @Setter
 public class RegisterDTO {
 
-    @NotBlank(message = "Name is required")
-    private String name;
+    @NotBlank
+    private  String name;
 
-    @NotBlank(message = "Phone is required")
+    @NotBlank
     private String phone;
 
     @Email(message = "Email should be valid")

@@ -91,6 +91,5 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     GROUP BY sh.id;
 """, nativeQuery = true)
     List<Object[]> findMyBookingsNative(Integer userId);
-
 }
 

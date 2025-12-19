@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.DTO.LoginDTO;
 import com.example.demo.DTO.RegisterDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -47,11 +48,10 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?>loginUser(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<?>loginUser(@RequestBody LoginDTO loginDTO) {
 
-        String phoneNumber = registerDTO.getPhone();
-        String email = registerDTO.getEmail();
-        String password=registerDTO.getPassword();
+        String email = loginDTO.getEmail();
+        String password=loginDTO.getPassword();
 
         var user=userRepository.findByEmail(email);
 
@@ -59,9 +59,6 @@ public class AuthController {
             return new ResponseEntity<>("User not Registered",HttpStatus.UNAUTHORIZED);
         }
 
-        if (!phoneNumber.equals(user.getPhone())) {
-            return new ResponseEntity<>("Invalid Phone number", HttpStatus.UNAUTHORIZED);
-        }
         if(!passwordEncoder.matches(password,user.getPassword())){
             return new ResponseEntity<>("Incorrect Password",HttpStatus.UNAUTHORIZED);
         }
