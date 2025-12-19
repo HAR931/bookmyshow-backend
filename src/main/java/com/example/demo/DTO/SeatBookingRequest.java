@@ -1,13 +1,15 @@
 package com.example.demo.DTO;
 
+import jakarta.transaction.Transactional;
 import lombok.*;
 
 import java.util.List;
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+
 
 public class SeatBookingRequest {
     private Integer showId;

@@ -29,7 +29,6 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
 
 
     @Modifying
-    @Transactional
     @Query("""
     UPDATE Seat s
     SET s.status = 'LOCKED', s.lockedBy = :id
@@ -52,7 +51,6 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     List<LockedSeatsResponse> getSeatStatuses(Integer showId,
                                               List<Integer> seatNumbers);
 
-    @Transactional
     @Modifying
     @Query("""
     UPDATE Seat s
@@ -62,7 +60,7 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
 """)
     public int confrimSeats(Integer showId, List<Integer> seatNumbers,User user);
 
-    @Transactional
+
     @Modifying
     @Query("""
     UPDATE Seat s

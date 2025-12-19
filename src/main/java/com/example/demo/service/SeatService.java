@@ -44,6 +44,7 @@ public class SeatService {
         return seats;
     }
 
+    @Transactional
     public String blockSeats(Integer showId,
                                           List<Integer> seatNumbers,
                                           Integer id,User user) {
