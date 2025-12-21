@@ -1,6 +1,7 @@
 package com.example.demo.DTO;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -9,6 +10,6 @@ import lombok.*;
 @Getter
 @Setter
 public class ScreenDTO {
-    @NotBlank
+    @NotNull
     private Integer screenNo;
 }

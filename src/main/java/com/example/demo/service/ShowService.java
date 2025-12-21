@@ -46,7 +46,7 @@ public class ShowService {
         );
 
         if (!overlap.isEmpty()) {
-            return new ResponseEntity<>("Another show already streaming in the given times",HttpStatus.CONFLICT);
+            return new ResponseEntity<>("A show is already scheduled for this screen during the selected time",HttpStatus.CONFLICT);
         }
 
         Integer capacity=showDTO.getSeatCapacity();
@@ -57,13 +57,14 @@ public class ShowService {
         show.setDate(showDTO.getDate());
         show.setStartTime(showDTO.getStartTime());
         show.setEndTime(showDTO.getEndTime());
-
+        show.setSeatCapacity(showDTO.getSeatCapacity());
         show.setScreen(screen.get());
+
         showRepository.save(show);
 
         seatService.createSeats(capacity,show);
 
-        return ResponseEntity.ok("Show has been successfully added");
+        return ResponseEntity.ok("New Show has been successfully added");
 
     }
     public List<MovieSearchResponse>searchByMovieName(String movieName) {

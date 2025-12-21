@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -28,18 +29,21 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     List<SeatResponse> findSeatsByShowId( Integer showId);
 
 
-    @Modifying
+ /*   @Modifying
     @Query("""
     UPDATE Seat s
-    SET s.status = 'LOCKED', s.lockedBy = :id
+    SET s.status = 'LOCKED', s.lockedBy = :id,s.lockedAt=CURRENT_TIMESTAMP
     WHERE s.show.id = :showId
       AND s.seatNumber IN :seatNumbers
-      AND (s.status = 'AVAILABLE' OR
-           (s.status = 'LOCKED' AND s.lockedBy = :id))
+      AND s.status = 'AVAILABLE'
+      OR (
+         s.status = 'LOCKED'
+         AND s.lockedAt <:expiryTime OR(s.lockedAt IS NULL
+        )
 """)
-    int lockSeats(Integer showId, List<Integer> seatNumbers,
+    int lockSeats(Integer showId, List<Integer> seatNumbers, LocalDateTime expiryTime,
                   Integer id);
-
+*/
     @Query("""
     SELECT new com.example.demo.DTO.LockedSeatsResponse(
         s.id, s.seatNumber, s.status,s.lockedBy
@@ -50,6 +54,28 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
 """)
     List<LockedSeatsResponse> getSeatStatuses(Integer showId,
                                               List<Integer> seatNumbers);
+    @Modifying
+    @Query("""
+UPDATE Seat s
+SET s.status = 'LOCKED',
+    s.lockedBy = :userId,
+    s.lockedAt = CURRENT_TIMESTAMP
+WHERE s.show.id = :showId
+  AND s.seatNumber IN :seatNumbers
+  AND (
+        s.status = 'AVAILABLE'
+        OR (
+            s.status = 'LOCKED'
+            AND (
+                s.lockedAt < :expiryTime
+                OR s.lockedAt IS NULL
+                OR s.lockedBy= :userId
+            )
+        )
+      )
+""")
+    int lockSeats(Integer showId,List<Integer> seatNumbers, LocalDateTime expiryTime,Integer userId);
+
 
     @Modifying
     @Query("""
@@ -57,14 +83,15 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     SET s.status = 'BOOKED', s.bookedBy =:user
     WHERE s.show.id = :showId
     AND s.seatNumber IN :seatNumbers
+    AND s.lockedBy= :userId
 """)
-    public int confrimSeats(Integer showId, List<Integer> seatNumbers,User user);
+    public int confirmSeats(Integer showId, List<Integer> seatNumbers,User user,Integer userId);
 
 
     @Modifying
     @Query("""
     UPDATE Seat s
-    SET s.status = 'AVAILABLE', s.lockedBy = NULL,s.bookedBy=NULL
+    SET s.status = 'AVAILABLE', s.lockedBy = NULL,s.bookedBy=NULL,s.lockedAt=NULL
     WHERE s.show.id = :showId
     AND s.lockedBy = :userId
     AND s.seatNumber IN :seatNumbers

@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "seat")
 @Getter
@@ -31,6 +33,9 @@ public class Seat {
     private String status = "AVAILABLE"; // AVAILABLE, BOOKED
 
     private Integer lockedBy;
+
+    private LocalDateTime lockedAt;
+
 
     @ManyToOne
     @JoinColumn(name="show_id")

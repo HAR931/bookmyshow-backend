@@ -1,5 +1,6 @@
 package com.example.demo.DTO;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
@@ -9,7 +10,9 @@ import lombok.*;
 @Setter
 public class TheatreDTO {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String location;
 
 }

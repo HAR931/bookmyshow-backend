@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class SeatService {
 
         for (int i = 1; i <= capacity; i++) {
             Seat seat = new Seat();
-            seat.setSeatNumber(i); // Integer OK, autoboxing
+            seat.setSeatNumber(i);
             seat.setShow(show);
             seats.add(seat);
         }
@@ -49,27 +50,23 @@ public class SeatService {
                                           List<Integer> seatNumbers,
                                           Integer id,User user) {
 
-        // Lock seats first
-        seatRepository.lockSeats(showId, seatNumbers,id);
+        LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5);
 
-        // Fetch updated statuses
+        if(seatRepository.lockSeats(showId, seatNumbers,expiryTime,id)==seatNumbers.size()){
+            return confirmSeats(showId,seatNumbers,user,id);
+        };
+
         List<LockedSeatsResponse> statuses =
                 seatRepository.getSeatStatuses(showId,seatNumbers);
 
-        List<LockedSeatsResponse> booked = new ArrayList<>();
         List<LockedSeatsResponse> failed = new ArrayList<>();
 
         for (LockedSeatsResponse s : statuses) {
-            if (s.getStatus().equals("LOCKED")&&s.getLockedBy().equals(id)){
-                booked.add(s);
-            } else {
+            if ((s.getStatus().equals("LOCKED")&&!s.getLockedBy().equals(id))||s.getStatus().equals("BOOKED"))
                 failed.add(s);
-            }
         }
 
-        if(!failed.isEmpty()){
-
-            StringBuilder s = new StringBuilder("Seat Numbers : ");
+        StringBuilder s = new StringBuilder("Seat Numbers : ");
 
             for (int i = 0; i < failed.size(); i++) {
                 s.append(failed.get(i).getSeatNumber());
@@ -81,18 +78,15 @@ public class SeatService {
             s.append(" Already booked");
 
             return s.toString();
-
-        }
-        return confrimSeats(showId,seatNumbers,user);
-
     }
 
-    public String confrimSeats(Integer showId,List<Integer>seatNumbers,User user){
-        seatRepository.confrimSeats(showId,seatNumbers,user);
+
+    public String confirmSeats(Integer showId,List<Integer>seatNumbers,User user,Integer userId){
+        seatRepository.confirmSeats(showId,seatNumbers,user,userId);
         return "Seat are booked successfully";
     }
 
-
+   @Transactional
     public void cancelSeats(Integer showId, List<Integer> seats, Integer userId) {
         seatRepository.unlockSeats(showId, seats, userId);
     }
@@ -113,9 +107,6 @@ public class SeatService {
             LocalTime startTime = LocalTime.parse(row[5].toString());
             LocalTime endTime = LocalTime.parse(row[6].toString());
 
-            // -------------------------------
-            // Convert "12,13,14" → List<Integer>
-            // -------------------------------
             String seatsStr = (String) row[7];
             String[] seatArr = seatsStr.split(",");
 
@@ -125,9 +116,6 @@ public class SeatService {
                 seatNumbers.add(Integer.parseInt(seat));
             }
 
-            // -------------------------------
-            // Add final DTO object
-            // -------------------------------
             MyBookingResponse response = new MyBookingResponse(
                     theatreName,
                     location,

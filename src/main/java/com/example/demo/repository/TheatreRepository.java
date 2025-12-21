@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface TheatreRepository extends JpaRepository<Theatre, Integer> {
 
+
 }
 

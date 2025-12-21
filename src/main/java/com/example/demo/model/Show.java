@@ -3,6 +3,7 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,7 @@ public class Show {
     @Column(nullable = false)
     private LocalTime endTime;
 
+    @Column(nullable = false)
     private Integer seatCapacity;// total seats for this show
 
      @OneToMany(mappedBy="show",cascade = CascadeType.ALL, orphanRemoval = true)

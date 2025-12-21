@@ -31,7 +31,7 @@ public class UserService{
         return userRepository.findByEmail(email);
     }
 
-   public Integer findIdByMail(String email){
+    public Integer findIdByMail(String email){
         return userRepository.findIdByMail(email);
     }
 

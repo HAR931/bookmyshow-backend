@@ -6,6 +6,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterDTO registerDTO) {
 
         String phone = registerDTO.getPhone();
         String email = registerDTO.getEmail();
@@ -48,12 +49,12 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?>loginUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?>loginUser(@Valid @RequestBody LoginDTO loginDTO) {
 
         String email = loginDTO.getEmail();
         String password=loginDTO.getPassword();
 
-        var user=userRepository.findByEmail(email);
+        User user=userRepository.findByEmail(email);
 
         if(user==null){
             return new ResponseEntity<>("User not Registered",HttpStatus.UNAUTHORIZED);

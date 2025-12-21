@@ -22,29 +22,14 @@ public class ScreenService {
         private final UserRepository userRepository;
 
 
-        public ResponseEntity<String> addScreen(String email, Integer theatreId, ScreenDTO screenDTO) {
-
-            User user = userRepository.findByEmail(email);
-
-            var theatre = theatreRepository.findById(theatreId);
-
-            if(theatre.isEmpty()) return new ResponseEntity<>("Theatre is not found", HttpStatus.NOT_FOUND);
-
-            if (!theatre.get().getOwner().getId().equals(user.getId())) {
-                return new ResponseEntity<>("Your are not owner", HttpStatus.UNAUTHORIZED);
-            }
-
-            boolean screenExists = screenRepository.existsByTheatreAndScreenNo(theatre.get(), screenDTO.getScreenNo());
-            if (screenExists) {
-                return new ResponseEntity<>("Screen already exists", HttpStatus.CONFLICT);
-            }
+        public void addScreen(String email, Theatre theatre, ScreenDTO screenDTO) {
 
             Screen screen = new Screen();
             screen.setScreenNo(screenDTO.getScreenNo());
-            screen.setTheatre(theatre.get());
+            screen.setTheatre(theatre);
+
             screenRepository.save(screen);
 
-            return new ResponseEntity<>("New screen has been successfully added", HttpStatus.CREATED);
         }
     }
 

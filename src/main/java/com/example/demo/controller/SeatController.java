@@ -29,17 +29,17 @@ public class SeatController {
     }
 
     @PostMapping("/bookSeats")
-    public String blockSeats(@RequestBody SeatBookingRequest request, Principal principal) {
+    public ResponseEntity<String> blockSeats(@RequestBody SeatBookingRequest request, Principal principal) {
 
         String email = principal.getName();
-        //Integer id = userService.findIdByMail(email);
         User user=userService.getUserByEmail(email);
         Integer id=user.getId();
 
-        // Call service and return the response
-        return seatService.blockSeats(
+        String message =seatService.blockSeats(
                 request.getShowId(),
                 request.getSeatNumbers(),id,user);
+
+        return new ResponseEntity<>(message,HttpStatus.OK);
     }
 
     @PostMapping("/cancelSeats")
