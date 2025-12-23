@@ -32,7 +32,6 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "owner",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<Theatre> theatres;
 
     @OneToMany(mappedBy = "bookedBy",cascade = CascadeType.ALL, orphanRemoval = true)

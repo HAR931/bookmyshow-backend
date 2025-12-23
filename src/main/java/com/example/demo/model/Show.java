@@ -45,7 +45,6 @@ public class Show {
 
     @ManyToOne
     @JoinColumn(name = "screen_id")
-    @JsonIgnore
     private Screen screen;
 
 }

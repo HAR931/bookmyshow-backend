@@ -27,10 +27,6 @@ public class ScreenController {
 
     private final ScreenService screenService;
 
-        UserRepository userRepository;
-        TheatreRepository theatreRepository;
-        ScreenRepository screenRepository;
-
         @PostMapping("theatreId/{theatreId}/screens/add")
         public ResponseEntity<String> addScreen(
                 @PathVariable Integer theatreId,
@@ -39,27 +35,7 @@ public class ScreenController {
 
             String email = principal.getName();
 
-            User user = userRepository.findByEmail(email);
-
-            var theatre = theatreRepository.findById(theatreId);
-
-            //check theatre exists
-            if(theatre.isEmpty()) return new ResponseEntity<>("Theatre is not found", HttpStatus.NOT_FOUND);
-
-            //check theatre belongs to loggedInUser
-            if (!theatre.get().getOwner().getId().equals(user.getId())) {
-                return new ResponseEntity<>("Your are not owner", HttpStatus.UNAUTHORIZED);
-            }
-
-            //check given screen number is not added
-            boolean screenExists = screenRepository.existsByTheatreAndScreenNo(theatre.get(), screenDTO.getScreenNo());
-            if (screenExists) {
-                return new ResponseEntity<>("Screen already exists", HttpStatus.CONFLICT);
-            }
-
-            screenService.addScreen(email,theatre.get(), screenDTO);
-
-            return new ResponseEntity<>("New Screen has been added",HttpStatus.OK);
+            return screenService.addScreen(email,theatreId, screenDTO);
         }
     }
 

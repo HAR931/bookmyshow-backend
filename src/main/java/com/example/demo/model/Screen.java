@@ -27,7 +27,6 @@ public class Screen {
     @JoinColumn(name = "theatre_id")
     private Theatre theatre;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "screen",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Show> shows;
 

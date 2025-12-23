@@ -26,11 +26,9 @@ public class Theatre {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonBackReference
     private User owner;
 
     @OneToMany(mappedBy = "theatre",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Screen> screens;
 }
 
