@@ -58,7 +58,7 @@ public class SeatController {
         return ResponseEntity.ok("The seats you booked will be cancelled");
     }
 
-    @GetMapping("/mybookings")
+    @GetMapping("/myBookings")
     public ResponseEntity<?>myBookings(Principal principal) {
         String email = principal.getName();
         Integer id = userService.findIdByMail(email);

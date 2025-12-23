@@ -53,7 +53,8 @@ public class SeatService {
         LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5);
 
         if(seatRepository.lockSeats(showId, seatNumbers,expiryTime,id)==seatNumbers.size()){
-            return confirmSeats(showId,seatNumbers,user,id);
+            seatRepository.confirmSeats(showId,seatNumbers,user,id);
+            return "Seat are booked successfully";
         };
 
         List<LockedSeatsResponse> statuses =
@@ -80,11 +81,6 @@ public class SeatService {
             return s.toString();
     }
 
-
-    public String confirmSeats(Integer showId,List<Integer>seatNumbers,User user,Integer userId){
-        seatRepository.confirmSeats(showId,seatNumbers,user,userId);
-        return "Seat are booked successfully";
-    }
 
    @Transactional
     public void cancelSeats(Integer showId, List<Integer> seats, Integer userId) {

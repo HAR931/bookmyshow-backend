@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.DTO.RegisterDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,9 +36,9 @@ public class UserService{
         return userRepository.findIdByMail(email);
     }
 
+    @Transactional
     public void deleteUser(String email){
-        Integer id= userRepository.findIdByMail(email);
-        userRepository.deleteById(id);
+        userRepository.deleteByEmail(email);
     }
 
 }
