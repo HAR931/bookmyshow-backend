@@ -16,7 +16,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
     private final String secret="hariganeshthesupermanwithsupersecertkeyhahahahahahah";
-    private final long expiration=1000*60*60*60;
+    private final long expiration=1000*60*60;
     private final Key key=Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(String email){

@@ -14,4 +14,3 @@ public class SeatResponse {
     private Integer seatNumber;
     private String status;
 }
-
