@@ -28,22 +28,6 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
 """)
     List<SeatResponse> findSeatsByShowId( Integer showId);
 
-
- /*   @Modifying
-    @Query("""
-    UPDATE Seat s
-    SET s.status = 'LOCKED', s.lockedBy = :id,s.lockedAt=CURRENT_TIMESTAMP
-    WHERE s.show.id = :showId
-      AND s.seatNumber IN :seatNumbers
-      AND s.status = 'AVAILABLE'
-      OR (
-         s.status = 'LOCKED'
-         AND s.lockedAt <:expiryTime OR(s.lockedAt IS NULL
-        )
-""")
-    int lockSeats(Integer showId, List<Integer> seatNumbers, LocalDateTime expiryTime,
-                  Integer id);
-*/
     @Query("""
     SELECT new com.example.demo.DTO.LockedSeatsResponse(
         s.id, s.seatNumber, s.status,s.lockedBy
