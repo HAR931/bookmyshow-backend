@@ -9,6 +9,7 @@ import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class TheatreController {
     private final UserRepository userRepository;
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> addTheatre(@Valid @RequestBody TheatreDTO theatreDTO, Principal principal) {
 
         String userEmail= principal.getName();

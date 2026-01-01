@@ -64,7 +64,10 @@ public class AuthController {
             return new ResponseEntity<>("Incorrect Password",HttpStatus.UNAUTHORIZED);
         }
 
-        String token=jwtUtil.generateToken(email);
+        String role = user.getRole().name();
+
+        String token=jwtUtil.generateToken(email,role);
+
         return ResponseEntity.ok(Map.of("token",token));
     }
 }

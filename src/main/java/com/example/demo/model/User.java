@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import com.example.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +31,10 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column (nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role=Role.USER;
 
     @OneToMany(mappedBy = "owner",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Theatre> theatres;
